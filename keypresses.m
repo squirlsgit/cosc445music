@@ -102,12 +102,10 @@ for i = 1:size(measurements,1)
    sumwidth = sumwidth + measurements(i).BoundingBox(3); 
 end
 rect = [measurements(1).BoundingBox(1),measurements(1).BoundingBox(2),sumwidth,sumheight];
-keyboard_piano = imcrop(sobeledges, rect);
+keyboard_piano = imcrop(keyboard, rect);
 keyboard_inv = 1 - keyboard_piano;
-keyboard_inv = imerode(keyboard_inv,strel('disk',15)); 
-keyboard_inv_crop = bwlabel(keyboard_inv);
 keyboardinvert_sharp= zeros(size(L,1),size(L,2));
-keyboardinvert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = keyboard_inv_crop;
+keyboardinvert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = keyboard_inv;
 %imshow(Linvert,[]);
 
 measurements = regionprops(key,'BoundingBox');
@@ -118,15 +116,12 @@ for i = 1:size(measurements,1)
    sumwidth = sumwidth + measurements(i).BoundingBox(3); 
 end
 rect = [measurements(1).BoundingBox(1),measurements(1).BoundingBox(2),sumwidth,sumheight];
-key_sharp = imcrop(sobeledges, rect);
+key_sharp = imcrop(key, rect);
 key_inv = 1 - key_sharp;
-key_inv = imerode(key_inv,strel('disk',15)); 
-key_inv_crop = bwlabel(key_inv);
 key_invert_sharp = zeros(size(L,1),size(L,2));
-key_invert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = key_inv_crop;
+key_invert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = key_inv;
 
  
-
 %--get difference of images
 imdiff = imabsdiff(keyboardinvert_sharp,key_invert_sharp);
 
@@ -134,11 +129,15 @@ imdiff = imabsdiff(keyboardinvert_sharp,key_invert_sharp);
 se = strel('disk',20);
 imdiff = imopen(imdiff,se);
 
+figure,imshow(key_sharp,[]);
+figure, imshow(imdiff, []);
+figure,imshow(key_invert_sharp,[]);
+figure,imshow(keyboardinvert_sharp,[]);
 %--detect sharp key presses with image difference
 for i = 1:size(Linvert,1)
     for j = 1: size(Linvert,2)
         if imdiff(i,j)>0 
-            if L(i,j)>0
+            if Linvert(i,j)>0 && L(i,j) == 0
                 if isempty(find(Noteholder == Linvert(i,j)+200))
                     Noteholder = [Noteholder [Linvert(i,j)+200; currentframe]];
                 end
