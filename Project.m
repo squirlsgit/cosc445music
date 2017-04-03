@@ -1,4 +1,6 @@
 clear;
+
+baseimage = imread('keyboard.png'); %picture of keyboard.
 keyboard = imread('keyboard.png');%picture of keyboard 
 
 detect = '4.png'; %change number to change picture of key being played
@@ -12,7 +14,7 @@ keyboard = im2bw(keyboard, threshold);
 key = im2bw(pressedKey, threshold);
 
 %open and close both images to get better edge definition
-se = strel('disk',20);
+se = strel('disk',10);
 se2 = strel('square',1);
 
 keyboard = imopen(keyboard,se);
@@ -21,7 +23,13 @@ keyboard = imclose(keyboard,se2);
 key = imopen(key,se);
 key = imclose(key,se2);
 
+cannyedges = im2bw(baseimage, 0.7);
+cannyedges = imopen(cannyedges,se);
+canny = edge(cannyedges,'sobel');
 
+imshow(canny,[]);
+%imshow(keyboard);
+%imshow(key);
 %get difference of images
 imdiff = imabsdiff(keyboard,key);
 
