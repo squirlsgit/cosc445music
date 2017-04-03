@@ -17,7 +17,7 @@ for i = 1:size(measurements,1)
     sumheight = max(sumheight,measurements(i).BoundingBox(4));
    sumwidth = sumwidth + measurements(i).BoundingBox(3); 
 end
-rect = [floor(measurements(1).BoundingBox(1)),floor(measurements(1).BoundingBox(2)),ceil(sumwidth),ceil(sumheight)];
+rect = [measurements(1).BoundingBox(1),measurements(1).BoundingBox(2),sumwidth,sumheight];
 piano = imcrop(sobeledges, rect);
 
 
@@ -77,12 +77,11 @@ end
 %--detect flat or sharp key presses
 %%--invertpiano
 invertpiano = 1 - piano;
-invertpiano = imerode(invertpiano,strel('disk',15)); 
 Linvert_crop = bwlabel(invertpiano);
 Linvert = zeros(size(L,1),size(L,2));
-Linvert(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = Linvert_crop;
-%imshow(Linvert,[]);
-
+Linvert(rect(1):rect(4),rect(2):rect(2)+rect(3)) = Linvert_crop;
+imshow(Linvert,[]);
+%{
 %%--detect pixel intensity change
 keyboard = im2bw(backlog, threshold);
 key = im2bw(currentimage, threshold);
@@ -103,12 +102,6 @@ for i = 1:size(measurements,1)
 end
 rect = [measurements(1).BoundingBox(1),measurements(1).BoundingBox(2),sumwidth,sumheight];
 keyboard_piano = imcrop(sobeledges, rect);
-keyboard_inv = 1 - keyboard_piano;
-keyboard_inv = imerode(keyboard_inv,strel('disk',15)); 
-keyboard_inv_crop = bwlabel(keyboard_inv);
-keyboardinvert_sharp= zeros(size(L,1),size(L,2));
-keyboardinvert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = keyboard_inv_crop;
-%imshow(Linvert,[]);
 
 measurements = regionprops(key,'BoundingBox');
 sumheight= 0;
@@ -119,16 +112,9 @@ for i = 1:size(measurements,1)
 end
 rect = [measurements(1).BoundingBox(1),measurements(1).BoundingBox(2),sumwidth,sumheight];
 key_sharp = imcrop(sobeledges, rect);
-key_inv = 1 - key_sharp;
-key_inv = imerode(key_inv,strel('disk',15)); 
-key_inv_crop = bwlabel(key_inv);
-key_invert_sharp = zeros(size(L,1),size(L,2));
-key_invert_sharp(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = key_inv_crop;
-
  
-
 %--get difference of images
-imdiff = imabsdiff(keyboardinvert_sharp,key_invert_sharp);
+imdiff = imabsdiff(keyboard_piano_crop,key_sharp_crop);
 
 %--open to get rid of small shadows
 se = strel('disk',20);
@@ -146,7 +132,7 @@ for i = 1:size(Linvert,1)
         end
     end
 end
-
+%}
 output = [Notes Noteholder]; %output should be a 2day array of integers identifying which labels are being pressed in what frames or time. 
 end
 
