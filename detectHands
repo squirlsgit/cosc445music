@@ -1,0 +1,31 @@
+%Detect hands and changes in background using difference of gaussians
+
+clear;
+%Import Video and Initialize Foreground Detector 
+foreground= vision. ForegroundDetector('NumGaussians',3,'NumTrainingFrames', 50);
+reader = vision.VideoFileReader('keyboard.mp4');
+
+back = imread('background.png');
+back = imresize(back,[540 960]);
+
+%analyze first frames as training frames to determine what is background to later separate
+for i = 1:50
+    frame = step(reader); % read the next video frame
+    FG = step(foreground, frame);
+end
+
+videoPlayer = vision.VideoPlayer('Name', 'Hands');%get player and write title of it
+
+videoPlayer.Position(3:4) = [960,540];  % window size: [width, height]
+
+se = strel('square', 15); % morphological filter for noise removal 
+
+while ~isDone(reader)
+    frame = step(reader); % read the next video frame
+    % Detect the FG in the current video frame
+    fg = step(foreground, frame);
+    % Use morphological opening to remove noise in the FG
+    filteredF = imopen(fg, se);
+    imshow(filteredF);  
+end
+release(reader); % Close the video file
