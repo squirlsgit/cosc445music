@@ -3,7 +3,7 @@ vid = VideoReader('keyboard.mp4');
 frame = 0;
 while hasFrame(vid)
     frame = frame + 1;
-    im = readFrame(v);
+    im 
 end
 keyboard = imread('keyboard.png');%picture of keyboard 
 %-- REMOVE HANDS FROM VIDEO CODE
@@ -18,6 +18,6 @@ detect = '4.png'; %change number to change picture of key being played
 pressedKey = imread(detect);%is picture of key being pressed
 Notes = [];
 
-Notes = keypresses(pressedKey,keyboard,keyboard,30,4,Notes);
+Notes = keypresses(pressedKey,keyboard,keyboard,24,4,Notes);
 
 
