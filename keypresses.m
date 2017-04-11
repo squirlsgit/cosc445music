@@ -129,10 +129,10 @@ imdiff = imabsdiff(keyboardinvert_sharp,key_invert_sharp);
 se = strel('disk',20);
 imdiff = imopen(imdiff,se);
 
-figure,imshow(key_sharp,[]);
-figure, imshow(imdiff, []);
-figure,imshow(key_invert_sharp,[]);
-figure,imshow(keyboardinvert_sharp,[]);
+%figure,imshow(key_sharp,[]);
+%figure, imshow(imdiff, []);
+%figure,imshow(key_invert_sharp,[]);
+%figure,imshow(keyboardinvert_sharp,[]);
 %--detect sharp key presses with image difference
 for i = 1:size(Linvert,1)
     for j = 1: size(Linvert,2)

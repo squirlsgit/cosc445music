@@ -1,23 +1,30 @@
 clear;
+keyboard = imread('keyboard.png');%picture of keyboard 
 vid = VideoReader('keyboard.mp4');
-frame = 0;
+frameone = 0;
+frametwo = 0;
+framethree = 0;
+framefour = 0;
+Notes = [];
+if hasFrame(vid)
+    firstframe = readFrame(vid);
+    frame = 1;
+    frameone = frame;
+end
 while hasFrame(vid)
     frame = frame + 1;
-    im 
+    if mod(frame,4) == 0
+        lastframe = readFrame(vid);
+        frametwo = frame;
+    end
+    if frameone ~= frametwo && frame >= 4
+        %-- Detect and Print array of notes
+        Notes = keypresses(lastframe,firstframe,firstframe,30,4,Notes);
+        firstframe = lastframe;
+        frameone = frame;
+    end
 end
-keyboard = imread('keyboard.png');%picture of keyboard 
+
 %-- REMOVE HANDS FROM VIDEO CODE
 %%--TO BE IMPLEMENTED TO DO-------------
-video = removehands('keypresses.asv', keyboard);
-
-
-%-- Detect and Print array of notes
-
-
-detect = '4.png'; %change number to change picture of key being played
-pressedKey = imread(detect);%is picture of key being pressed
-Notes = [];
-
-Notes = keypresses(pressedKey,keyboard,keyboard,24,4,Notes);
-
 
