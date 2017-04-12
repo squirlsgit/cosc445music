@@ -14,18 +14,7 @@ end
 while hasFrame(vid)
     frame = frame + 1;
     currentFrame = readFrame(vid);
-    if mod(frame,16) == 0
-        lastframe = currentFrame;
-        frametwo = frame;
-    end
-    if frameone ~= frametwo && frame >= 16
-        %-- Detect and Print array of notes
-        
-        Notes = keypresses(lastframe,firstframe,firstframe,30,frame,Notes);
-        firstframe = lastframe;
-        frameone = frame;
-       
-    end
+        Notes = keypresses(currentFrame,firstframe,firstframe,30,frame,Notes);
     
 end
 
