@@ -5,7 +5,7 @@ function output = keypresses(currentimage, backlog,background, framerate,current
 %currentframe is number of frame being analyzed
 %Notes is an array that was previously returned. tracks what notes have
 %been done.
-video_orig = currentimage(:,:,1);
+video_orig = rgb2gray(currentimage);
 %--crop images
 threshold = 0.7;
 %sobel is a nondescriptive term. was being used for hough transform, but
