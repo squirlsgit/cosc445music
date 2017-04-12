@@ -13,16 +13,20 @@ if hasFrame(vid)
 end
 while hasFrame(vid)
     frame = frame + 1;
-    if mod(frame,8) == 0
-        lastframe = readFrame(vid);
+    currentFrame = readFrame(vid);
+    if mod(frame,16) == 0
+        lastframe = currentFrame;
         frametwo = frame;
     end
-    if frameone ~= frametwo && frame >= 8
+    if frameone ~= frametwo && frame >= 16
         %-- Detect and Print array of notes
+        
         Notes = keypresses(lastframe,firstframe,firstframe,30,frame,Notes);
         firstframe = lastframe;
         frameone = frame;
+       
     end
+    
 end
 
 %-- REMOVE HANDS FROM VIDEO CODE
