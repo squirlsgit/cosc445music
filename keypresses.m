@@ -1,4 +1,4 @@
-function output = keypresses(currentimage, backlog,background, framerate,currentframe,Notes) %background is image of keyboard. 
+function output = keypresses(currentimage, backlog,background,handmask, framerate,currentframe,Notes) %background is image of keyboard. 
 %currentimage is current image being analyzed for keypresses
 %imagecomapre are images base is being compared to
 %framerate is useful for timescale. is not used in current version.
@@ -10,8 +10,8 @@ video_orig = rgb2gray(currentimage);
 threshold = 0.7;
 %sobel is a nondescriptive term. was being used for hough transform, but
 %thats in project now.
-sobeledges = im2bw(background, threshold); 
-sobeledges = imopen(sobeledges,strel('disk',10));
+sobeledges = bakcground > threshold; 
+sobeledges = imopen(sobeledges,strel('disk',10));s
 measurements = regionprops(sobeledges,'BoundingBox');
 sumheight= 0;
 sumwidth = 0;
@@ -68,6 +68,7 @@ imdiff = imabsdiff(keyboard,key);
 %open to get rid of small shadows
 se = strel('disk',20);
 imdiff = imopen(imdiff,se);
+imdiff = imdiff - handmask;
 %imshow(imdiff,[]);
 %figure,imshow(imdiff,[]);
 %figure,imshow(video_output,[]);

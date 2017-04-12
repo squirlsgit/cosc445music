@@ -1,0 +1,16 @@
+function output = removehands(I)
+hands = rgb2hsv(I);
+
+
+
+end
+
+
+
+%keyboard = imread('keyboard.png');%picture of keyboard 
+%vid = VideoReader('keyboard.mp4');
+
+%hand = imread('6.png');
+%hand = imresize(hand, 0.2);
+%handhsv = rgb2hsv(hand);
+%imshow(handhsv);
