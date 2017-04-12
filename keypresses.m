@@ -1,13 +1,15 @@
 function output = keypresses(currentimage, backlog,background, framerate,currentframe,Notes) %background is image of keyboard. 
 %currentimage is current image being analyzed for keypresses
 %imagecomapre are images base is being compared to
-%framerate is useful for timescale
+%framerate is useful for timescale. is not used in current version.
 %currentframe is number of frame being analyzed
 %Notes is an array that was previously returned. tracks what notes have
 %been done.
 video_orig = currentimage(:,:,1);
 %--crop images
 threshold = 0.7;
+%sobel is a nondescriptive term. was being used for hough transform, but
+%thats in project now.
 sobeledges = im2bw(background, threshold); 
 sobeledges = imopen(sobeledges,strel('disk',10));
 measurements = regionprops(sobeledges,'BoundingBox');
@@ -75,14 +77,15 @@ Noteholder = [];
 for i = 1:size(L,1)
     for j = 1: size(L,2)
         if imdiff(i,j)>0 
-            if L(i,j)>0
-                if isempty(find(Noteholder == L(i,j)))
-                    Noteholder = [Noteholder [L(i,j); currentframe]];
-                end            
-            elseif Linvert(i,j)>0 
+            if Linvert(i,j)>0 
                 if isempty(find(Noteholder == Linvert(i,j)+200))
                     Noteholder = [Noteholder [Linvert(i,j)+200; currentframe]];
                 end
+                       
+            elseif L(i,j)>0
+                 if isempty(find(Noteholder == L(i,j)))
+                    Noteholder = [Noteholder [L(i,j); currentframe]];
+                end    
             end
         end
     end

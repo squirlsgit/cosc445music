@@ -24,8 +24,8 @@ while ~isDone(reader)
     frame = step(reader); % read the next video frame
     % Detect the FG in the current video frame
     fg = step(foreground, frame);
-    % Use morphological opening to remove noise in the FG
+    % Use morpholgical opening to remove noise in the FG
     filteredF = imopen(fg, se);
     imshow(filteredF);  
 end
-release(reader); % Close the video file
+release(reader); % Close the video fileo
