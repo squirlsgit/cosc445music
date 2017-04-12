@@ -10,8 +10,11 @@ video_orig = rgb2gray(currentimage);
 threshold = 0.7;
 %sobel is a nondescriptive term. was being used for hough transform, but
 %thats in project now.
-sobeledges = bakcground > threshold; 
-sobeledges = imopen(sobeledges,strel('disk',10));s
+sobeledges = im2bw(background,threshold);
+%get rid of small particles
+sobeledges = imopen(sobeledges,strel('disk',4));
+%cleanup
+sobeledges = imclose(sobeledges,strel('line',20,90));
 measurements = regionprops(sobeledges,'BoundingBox');
 sumheight= 0;
 sumwidth = 0;
@@ -22,15 +25,17 @@ end
 rect = [floor(measurements(1).BoundingBox(1)),floor(measurements(1).BoundingBox(2)),ceil(sumwidth),ceil(sumheight)];
 piano = imcrop(sobeledges, rect);
 L = bwlabel(sobeledges);
+%imshow(L);
 %--detect flat or sharp key presses
 %%--invertpiano
 invertpiano = 1 - piano;
-invertpiano = imerode(invertpiano,strel('disk',15)); 
+invertpiano = imerode(invertpiano,strel('line',15,0)); 
+invertpiano = imerode(invertpiano,strel('line',15,90)); 
 Linvert_crop = bwlabel(invertpiano);
 Linvert = zeros(size(L,1),size(L,2));
 Linvert(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = Linvert_crop;
 %imshow(Linvert,[]);
-
+%imshow(L + Linvert,[]);
 %--rotate image--UNFINISHED
 %{
 %%--Detect Edges--
@@ -76,7 +81,7 @@ keyDiff = imclose(keyDiff,se4);
 imdiff = imabsdiff(keyboardDiff,keyDiff);
 
 %open to get rid of small shadows
-se = strel('disk',3);
+se = strel('disk',4);
 imdiff = imopen(imdiff,se);
 imdiff = imdiff - handmask;
 %imshow(imdiff,[]);
@@ -102,9 +107,8 @@ for i = 1:size(L,1)
     end
 end
 
-
 video_orig = im2double(video_orig);
-video_output = [video_orig ; imdiff ; key ; keyboard];
+video_output = [video_orig ; imdiff ; handmask; L + Linvert ];
 imshow(video_output);
 
 output = [Notes Noteholder]; %output should be a 2day array of integers identifying which labels are being pressed in what frames or time. 
