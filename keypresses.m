@@ -36,7 +36,6 @@ Linvert(rect(2):rect(4)+rect(2),rect(1):rect(3)+rect(1)) = Linvert_crop;
 %%--Detect Edges--
 fullsobel = edge(sobeledges,'sobel');
 fullsobel = imdilate(fullsobel, strel('line',10,90));
-
 %%--rotate with hough used on fullsobel
 [H T R] = hough(fullsobel);
 peaks = houghpeaks(H);
@@ -62,11 +61,22 @@ key = imopen(key,se);
 key = imclose(key,se2);
 %imshow(keyboard);
 %imshow(key);
-%get difference of images
-imdiff = imabsdiff(keyboard,key);
+
+%get difference of images to detect fingers
+%Use smaller SE and new threshold so that fingers are not erased completely 
+se3 = strel('disk',1);
+se4 = strel('square',3); 
+keyboardDiff=im2bw(backlog, 0.5);
+keyDiff=im2bw(currentimage, 0.45);
+keyboardDiff = imopen(keyboardDiff,se3);
+keyboardDiff = imclose(keyboardDiff,se4);
+keyDiff= imopen(keyDiff,se3);
+keyDiff = imclose(keyDiff,se4);
+
+imdiff = imabsdiff(keyboardDiff,keyDiff);
 
 %open to get rid of small shadows
-se = strel('disk',20);
+se = strel('disk',3);
 imdiff = imopen(imdiff,se);
 %imshow(imdiff,[]);
 %figure,imshow(imdiff,[]);
@@ -98,7 +108,5 @@ imshow(video_output);
 
 output = [Notes Noteholder]; %output should be a 2day array of integers identifying which labels are being pressed in what frames or time. 
 end
-
-
 
 
